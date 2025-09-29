@@ -1,10 +1,11 @@
 import { fetchBaseQuery, type BaseQueryApi, type FetchArgs } from "@reduxjs/toolkit/query";
 import { startLoading, stopLoading } from "../layout/uiSlice";
 import { toast } from "react-toastify";
-import { router } from "../model/routes/Routes";
+import { router } from "../routes/Routes";
 
 const customBaseQuery = fetchBaseQuery({
-    baseUrl: 'https://localhost:5001/api'
+    baseUrl: 'https://localhost:5001/api',
+    credentials: 'include'
 
 })
 

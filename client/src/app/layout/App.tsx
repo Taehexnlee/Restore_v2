@@ -1,45 +1,35 @@
-import { Box, Container, createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { Box, CssBaseline, ThemeProvider, Toolbar } from "@mui/material";
+import { useMemo } from "react";
 import Navbar from "./Navbar";
 import { Outlet } from "react-router-dom";
 import { useAppSelector } from "../store/store";
-
+import PageContainer from "../components/PageContainer";
+import { getAppTheme } from "./theme";
 
 function App() {
-  const {darkMode} = useAppSelector(state => state.ui)
-  const palleteType = darkMode ? 'dark' : 'light'
-  const theme = createTheme({
-    palette: {
-      mode: palleteType,
-      background: {
-        default: (palleteType === 'light') ? '#eaeaea' : '#121212'
-      }
-    }
-  })
-
-  
-  
+  const { darkMode } = useAppSelector((state) => state.ui);
+  const paletteMode = darkMode ? "dark" : "light";
+  const theme = useMemo(() => getAppTheme(paletteMode), [paletteMode]);
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline/>
-      <Navbar/>
+      <CssBaseline />
+      <Navbar />
       <Box
+        component="main"
         sx={{
-          minHeight:'100vh',
-          background: darkMode 
-            ? 'radical-gradient(circle, #1e3aBa, #111B27)'
-            : 'radical-gradient(circle, #baecf9, #f0f9ff)',
-
-          py: 6
+          minHeight: "100vh",
+          background: darkMode
+            ? "radial-gradient(circle at top, #1f2a37, #0f172a 60%)"
+            : "radial-gradient(circle at top, #e3f2fd, #f3f6fb 60%)",
         }}
       >
-        <Container maxWidth="xl" sx={{ mt: 8}}>
-          <Outlet/>
-        </Container>
+        <Toolbar />
+        <PageContainer maxWidth="lg" sx={{ minHeight: "60vh" }}>
+          <Outlet />
+        </PageContainer>
       </Box>
-
     </ThemeProvider>
-
   );
 }
 
