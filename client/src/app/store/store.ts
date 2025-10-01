@@ -2,6 +2,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import counterReducer from "../../features/catalog/counterReducer";
 import { catalogApi } from "../../features/catalog/catalogApi";
+import catalogReducer from "../../features/catalog/catalogSlice";
 import { uiSlice } from "../layout/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { errorApi } from "../../features/about/errorApi";
@@ -13,7 +14,8 @@ export const store = configureStore({
     [errorApi.reducerPath] : errorApi.reducer,
     [basketApi.reducerPath] : basketApi.reducer,
     counter: counterReducer,
-    ui: uiSlice.reducer
+    ui: uiSlice.reducer,
+    catalog: catalogReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(catalogApi.middleware, errorApi.middleware, basketApi.middleware),
 });

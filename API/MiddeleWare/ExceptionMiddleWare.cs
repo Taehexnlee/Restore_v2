@@ -29,9 +29,8 @@ public class ExceptionMiddleWare(IHostEnvironment env, ILogger<ExceptionMiddleWa
         var response = new ProblemDetails
         {
             Status = 500,
-            Detail = env.IsDevelopment() ? ex.StackTrace.ToString() : null,
+            Detail = env.IsDevelopment() ? ex.StackTrace : null,
             Title = ex.Message
-
         };
         var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         var json = JsonSerializer.Serialize(response, options);

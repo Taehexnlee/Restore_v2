@@ -3,8 +3,9 @@ import type { SxProps, Theme } from "@mui/material/styles";
 
 export default function PageContainer({
   children,
-  maxWidth = "lg",
+  maxWidth = false,
   sx,
+  disableGutters = true,
   ...rest
 }: ContainerProps) {
   const baseStyles = {
@@ -19,7 +20,7 @@ export default function PageContainer({
     : baseStyles;
 
   return (
-    <Container maxWidth={maxWidth} sx={mergedSx} {...rest}>
+    <Container maxWidth={maxWidth} disableGutters={disableGutters} sx={mergedSx} {...rest}>
       {children}
     </Container>
   );
