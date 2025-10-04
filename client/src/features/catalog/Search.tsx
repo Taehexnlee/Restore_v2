@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { type ChangeEvent, useEffect, useMemo, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { debounce } from "@mui/material/utils";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
@@ -39,10 +39,11 @@ export default function Search() {
     <TextField
       label="Search products"
       type="search"
-      variant="outlined"
+      variant="filled"
       fullWidth
       value={term}
       onChange={handleChange}
+      InputProps={{ disableUnderline: true }}
     />
   );
 }

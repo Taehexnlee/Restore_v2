@@ -10,6 +10,8 @@ import ProductList from "./ProductList";
 import { useFetchFiltersQuery, useFetchProductQuery } from "./catalogApi";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
 import { setPageNumber } from "./catalogSlice";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/GridLegacy";
 
 export default function Catalog() {
   const dispatch = useAppDispatch();
@@ -33,8 +35,8 @@ export default function Catalog() {
   };
 
   return (
-    <Box component="section" sx={{ py: { xs: 4, md: 6 }, backgroundColor: "background.default" }}>
-      <Stack spacing={4} sx={{ width: "100%", px: { xs: 2, sm: 4, lg: 6, xl: 10 } }}>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 6, px: { xs: 2, md: 0 } }}>
+      <Grid container spacing={4}>
         <Paper
           variant="outlined"
           sx={{
@@ -45,7 +47,7 @@ export default function Catalog() {
               "linear-gradient(135deg, rgba(79,70,229,0.12) 0%, rgba(37,99,235,0.12) 45%, rgba(14,116,144,0.1) 100%)",
           }}
         >
-          <Stack spacing={2} maxWidth={{ xs: "100%", md: 640, xl: 720 }}>
+          <Stack spacing={2} maxWidth={{ xs: "100%", md: 640, xl: 720 }} justifyItems='ce'>
             <Typography variant="overline" color="primary" sx={{ letterSpacing: 2, fontWeight: 600 }}>
               Curated Catalog
             </Typography>
@@ -116,7 +118,9 @@ export default function Catalog() {
             )}
           </Box>
         </Box>
-      </Stack>
-    </Box>
+      </Grid>
+
+    </Container>
+   
   );
 }

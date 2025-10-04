@@ -6,7 +6,6 @@ import {
   Button,
   Chip,
   Divider,
-  Grid,
   IconButton,
   Paper,
   Stack,
@@ -18,6 +17,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { Add, Remove, RemoveShoppingCart, ShoppingCartCheckout } from "@mui/icons-material";
 import { useFetchProductDetailQuery } from "./catalogApi";
 import { currencyFormat } from "../../lib/util";

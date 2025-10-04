@@ -1,4 +1,5 @@
-import { Badge, Box, Button, Divider, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Badge, Box, Button, Divider, Paper, Stack, TextField, Typography } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { currencyFormat } from "../../../lib/util";
 import { useFetchBasketQuery } from "../../../features/basket/basketApi";
 import type { Item } from "../../model/basket";

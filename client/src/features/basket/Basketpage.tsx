@@ -1,4 +1,5 @@
-import { Box, Chip, Divider, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Box, Chip, Divider, Paper, Stack, Typography } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { useFetchBasketQuery } from "./basketApi";
 import BasketItem from "./BasketItem";
 import LoadingState from "../../app/components/LoadingState";

@@ -4,6 +4,8 @@ import { Link, NavLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setDarkMode } from "./uiSlice";
 import { useFetchBasketQuery } from "../../features/basket/basketApi";
+import UserMenu from "./UserMenu";
+import { useUserInfoQuery } from "../../features/account/accountApi";
 
 const midLink = [
   { title: 'catalog', path: '/catalog' },
@@ -33,6 +35,7 @@ const navStyle = {
 };
 
 export default function Navbar() {
+  const {data: user} = useUserInfoQuery();
   const { isLoading, darkMode } = useAppSelector((state) => state.ui);
   const dispatch = useAppDispatch();
   const { data: basket } = useFetchBasketQuery();
@@ -48,7 +51,7 @@ export default function Navbar() {
           <IconButton onClick={() => dispatch(setDarkMode())} aria-label="Toggle theme mode" color="inherit">
             {darkMode ? <DarkMode /> : <LightMode sx={{ color: "#ffce45" }} />}
           </IconButton>
-        </Box> 
+        </Box>
 
         <List sx={{ display: "flex", gap: 0.5 }} disablePadding>
           {midLink.map(({ title, path }) => (
@@ -75,27 +78,32 @@ export default function Navbar() {
               <ShoppingCart />
             </Badge>
           </IconButton>
-          <List sx={{ display: "flex", gap: 0.5 }} disablePadding>
-            {rightLink.map(({ title, path }) => (
-              <ListItem
-                component={NavLink}
-                to={path}
-                key={path}
-                sx={navStyle}
-                disablePadding
-              >
-                {title.toUpperCase()}
-              </ListItem>
-            ))}
-          </List>
+          {user ? (
+            <UserMenu user={user} />
+          ) : (
+            <List sx={{ display: "flex", gap: 0.5 }} disablePadding>
+              {rightLink.map(({ title, path }) => (
+                <ListItem
+                  component={NavLink}
+                  to={path}
+                  key={path}
+                  sx={navStyle}
+                  disablePadding
+                >
+                  {title.toUpperCase()}
+                </ListItem>
+              ))}
+            </List>
+
+          )}
 
         </Box>
 
 
       </Toolbar>
       {isLoading && (
-        <Box sx={{width: '100%'}}>
-            <LinearProgress color="secondary"/>
+        <Box sx={{ width: '100%' }}>
+          <LinearProgress color="secondary" />
         </Box>
       )}
     </AppBar>

@@ -16,17 +16,32 @@ export default function ProductList({ products, isLoading }: Props) {
           <CircularProgress color="secondary" size={32} />
         </Box>
       )}
+
       <Box
         display="grid"
-        gap={{ xs: 2.5, md: 3 }}
+        gap={{ xs: 3, md: 3.5, lg: 4 }}
         gridTemplateColumns={{
-          xs: "repeat( auto-fit, minmax(240px, 1fr) )",
-          sm: "repeat( auto-fit, minmax(260px, 1fr) )",
-          lg: "repeat( auto-fit, minmax(280px, 1fr) )",
+          xs: "1fr",
+          sm: "repeat(2, minmax(0, 1fr))",
+          md: "repeat(3, minmax(0, 1fr))",
+          lg: "repeat(4, minmax(0, 1fr))",
+          xl: "repeat(auto-fit, minmax(260px, 1fr))",
         }}
+        alignItems="stretch"
       >
         {products.map((product) => (
-          <Box key={product.id} display="flex" sx={{ height: "100%" }}>
+          <Box
+            key={product.id}
+            display="flex"
+            sx={{
+              height: "100%",
+              transition: "transform 160ms ease, box-shadow 160ms ease",
+              "&:hover": {
+                transform: { sm: "translateY(-6px)" },
+                boxShadow: "0 18px 48px rgba(15, 23, 42, 0.35)",
+              },
+            }}
+          >
             <ProductCard product={product} />
           </Box>
         ))}

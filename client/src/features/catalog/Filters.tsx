@@ -1,4 +1,5 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Divider, Typography } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import CheckboxButtons from "../../app/shared/components/CheckboxButtons";
 import RadioButtonGroup from "../../app/shared/components/RadioButtonGroup";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
@@ -26,49 +27,76 @@ export default function Filters({ filtersData }: Props) {
 
   return (
     <Box display="flex" flexDirection="column" gap={3}>
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
-        <Search />
-      </Paper>
+      <Card
+        variant="outlined"
+        sx={(theme) => ({
+          borderRadius: 3,
+          borderColor: alpha(theme.palette.primary.main, 0.25),
+          backgroundColor: alpha(theme.palette.background.paper, 0.65),
+          backdropFilter: "blur(18px)",
+          boxShadow: "0 18px 48px rgba(15, 23, 42, 0.25)",
+        })}
+      >
+        <CardContent sx={{ display: "flex", flexDirection: "column", gap: 3, p: { xs: 3, md: 4 } }}>
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>
+              Search
+            </Typography>
+            <Search />
+          </Box>
 
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5 }}>
-          Sort by
-        </Typography>
-        <RadioButtonGroup
-          options={sortOptions}
-          selectedValue={orderBy}
-          onChange={(event) => dispatch(setOrderBy(event.target.value))}
-        />
-      </Paper>
+          <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
 
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5 }}>
-          Brands
-        </Typography>
-        <CheckboxButtons
-          items={filtersData.brands}
-          checked={brands}
-          onChange={(items) => dispatch(setBrands(items))}
-        />
-      </Paper>
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>
+              Sort by
+            </Typography>
+            <RadioButtonGroup
+              options={sortOptions}
+              selectedValue={orderBy}
+              onChange={(event) => dispatch(setOrderBy(event.target.value))}
+            />
+          </Box>
 
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5 }}>
-          Types
-        </Typography>
-        <CheckboxButtons
-          items={filtersData.types}
-          checked={types}
-          onChange={(items) => dispatch(setTypes(items))}
-        />
-      </Paper>
+          <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
+
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>
+              Brands
+            </Typography>
+            <CheckboxButtons
+              items={filtersData.brands}
+              checked={brands}
+              onChange={(items) => dispatch(setBrands(items))}
+            />
+          </Box>
+
+          <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
+
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>
+              Types
+            </Typography>
+            <CheckboxButtons
+              items={filtersData.types}
+              checked={types}
+              onChange={(items) => dispatch(setTypes(items))}
+            />
+          </Box>
+        </CardContent>
+      </Card>
 
       <Button
-        variant="text"
+        variant="outlined"
         color="secondary"
         onClick={() => dispatch(resetParams())}
         disabled={!hasActiveFilters}
-        sx={{ alignSelf: "flex-start" }}
+        sx={{
+          alignSelf: "stretch",
+          fontWeight: 600,
+          borderRadius: 999,
+          py: 1.2,
+        }}
       >
         Reset filters
       </Button>
