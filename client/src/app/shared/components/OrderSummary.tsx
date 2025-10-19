@@ -1,14 +1,11 @@
 import { Badge, Box, Button, Divider, Paper, Stack, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/GridLegacy";
 import { currencyFormat } from "../../../lib/util";
-import { useFetchBasketQuery } from "../../../features/basket/basketApi";
-import type { Item } from "../../model/basket";
 import { Link } from "react-router-dom";
+import { useBakset } from "../../../lib/hooks/useBasket";
 
 export default function OrderSummary() {
-    const { data: basket } = useFetchBasketQuery();
-    const subtotal = basket?.items.reduce((sum: number, item: Item) => sum + item.quantity * item.price, 0) ?? 0;
-    const deliveryFee = subtotal > 10000 ? 0 : 500;
+    const { subtotal, deliveryFee} =useBakset();
     const savings = deliveryFee === 0 ? 500 : 0;
 
     return (
@@ -63,6 +60,7 @@ export default function OrderSummary() {
                     </Stack>
 
                     <Stack spacing={1}>
+                        {!location.pathname.includes('ckecout') &&
                         <Button
                             component={Link}
                             to="/checkout"
@@ -72,7 +70,7 @@ export default function OrderSummary() {
                             fullWidth
                         >
                             Proceed to checkout
-                        </Button>
+                        </Button>}
                         <Typography variant="caption" color="text.secondary" textAlign="center">
                             Secure checkout • Free returns within 30 days
                         </Typography>

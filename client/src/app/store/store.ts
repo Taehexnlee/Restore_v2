@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { errorApi } from "../../features/about/errorApi";
 import { basketApi } from "../../features/basket/basketApi";
 import { accountApi } from "../../features/account/accountApi";
+import { checkoutApi } from "../../features/checkout/checkoutApi";
 
 export const store = configureStore({
   reducer: {
@@ -15,11 +16,12 @@ export const store = configureStore({
     [errorApi.reducerPath] : errorApi.reducer,
     [basketApi.reducerPath] : basketApi.reducer,
     [accountApi.reducerPath] :accountApi.reducer,
+    [checkoutApi.reducerPath] : checkoutApi.reducer,
     counter: counterReducer,
     ui: uiSlice.reducer,
     catalog: catalogReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(catalogApi.middleware, errorApi.middleware, basketApi.middleware, accountApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(catalogApi.middleware, errorApi.middleware, basketApi.middleware, accountApi.middleware, checkoutApi.middleware),
 });
 
 // 타입 정의 (TS 친화적 hooks용)
