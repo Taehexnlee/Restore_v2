@@ -9,6 +9,7 @@ import { errorApi } from "../../features/about/errorApi";
 import { basketApi } from "../../features/basket/basketApi";
 import { accountApi } from "../../features/account/accountApi";
 import { checkoutApi } from "../../features/checkout/checkoutApi";
+import { orderApi } from "../../features/order/orderApi";
 
 export const store = configureStore({
   reducer: {
@@ -17,11 +18,12 @@ export const store = configureStore({
     [basketApi.reducerPath] : basketApi.reducer,
     [accountApi.reducerPath] :accountApi.reducer,
     [checkoutApi.reducerPath] : checkoutApi.reducer,
+    [orderApi.reducerPath] : orderApi.reducer,
     counter: counterReducer,
     ui: uiSlice.reducer,
     catalog: catalogReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(catalogApi.middleware, errorApi.middleware, basketApi.middleware, accountApi.middleware, checkoutApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(catalogApi.middleware, errorApi.middleware, basketApi.middleware, accountApi.middleware, checkoutApi.middleware, orderApi.middleware),
 });
 
 // 타입 정의 (TS 친화적 hooks용)
