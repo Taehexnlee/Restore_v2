@@ -1,9 +1,15 @@
-name: Build and deploy ASP.NET Core + Vite to Azure Web App - rerestore
+name: Build & Deploy (API + Vite SPA) - rerestore
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  NODE_VERSION: '20'
+  API_CSPROJ: 'API/API.csproj'
+  CLIENT_DIR: 'client'  # ← 프론트 폴더명이 다르면 여기만 수정 (예: src/Web)
 
 jobs:
   build:
@@ -18,33 +24,52 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
 
-      # 프론트 빌드 (Vite 공개키를 빌드 타임에 주입!)
+      # 프론트 폴더 존재 확인 (안전장치)
+      - name: Verify client directory
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${{ env.CLIENT_DIR }}/package.json")) {
+            Write-Host "Could not find package.json under $env:CLIENT_DIR"
+            Write-Host "Candidates:"
+            Get-ChildItem -Recurse -Filter package.json | Select-Object -Expand FullName
+            throw "CLIENT_DIR is wrong. Update env.CLIENT_DIR to your frontend path."
+          }
+
+      # 프론트 빌드 (React 19 RC 대비)
       - name: Install deps & build client
-        working-directory: client
+        working-directory: ${{ env.CLIENT_DIR }}
         env:
           VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY }}
         run: |
           npm ci --legacy-peer-deps
           npm run build
 
-      # 새 빌드물을 API/wwwroot로 반영 (기존 정적파일 제거 후 복사)
+      # dist 존재 여부 확인 (빌드 실패 사전 검출)
+      - name: Verify dist exists
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${{ env.CLIENT_DIR }}/dist")) {
+            throw "Build did not produce a dist folder. Check npm logs above."
+          }
+
+      # API/wwwroot 로 동기화
       - name: Sync client build into API/wwwroot
         shell: pwsh
         run: |
-          if (Test-Path "API/wwwroot") { Remove-Item -Recurse -Force "API/wwwroot/*" }
           New-Item -ItemType Directory -Force -Path "API/wwwroot" | Out-Null
-          Copy-Item -Recurse -Force "client/dist/*" "API/wwwroot/"
+          Remove-Item -Recurse -Force "API/wwwroot/*" -ErrorAction SilentlyContinue
+          Copy-Item -Recurse -Force "${{ env.CLIENT_DIR }}/dist/*" "API/wwwroot/"
 
-      # 솔루션 수준이 아닌 API 프로젝트 단위로 Publish (경고 제거)
+      # API만 Publish (솔루션 레벨 경고 회피)
       - name: Publish API
-        run: dotnet publish "API/API.csproj" -c Release -o "${{ github.workspace }}\publish"
+        run: dotnet publish "${{ env.API_CSPROJ }}" -c Release -o "${{ github.workspace }}\publish"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
