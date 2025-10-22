@@ -7,7 +7,8 @@ export default defineConfig({
   build: {
     outDir:'../API/wwwroot',
     chunkSizeWarningLimit: 1024,
-    emptyOutDir: true
+    emptyOutDir: true,
+    sourcemap: true
   },
   server:{
     port:3001

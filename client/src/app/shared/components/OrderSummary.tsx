@@ -1,12 +1,14 @@
 import { Badge, Box, Button, Divider, Paper, Stack, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/GridLegacy";
-import { currencyFormat } from "../../../lib/util";
-import { Link } from "react-router-dom";
+import { currencyFormat, safeRegexTest } from "../../../lib/util";
+import { Link, useLocation } from "react-router-dom";
 import { useBakset } from "../../../lib/hooks/useBasket";
 
 export default function OrderSummary() {
     const { subtotal, deliveryFee} =useBakset();
     const savings = deliveryFee === 0 ? 500 : 0;
+    const { pathname } = useLocation();
+    const isCheckoutRoute = safeRegexTest(/^\/checkout(\/|$)/, pathname);
 
     return (
         <Stack spacing={3}>
@@ -60,7 +62,7 @@ export default function OrderSummary() {
                     </Stack>
 
                     <Stack spacing={1}>
-                        {!location.pathname.includes('ckecout') &&
+                        {!isCheckoutRoute &&
                         <Button
                             component={Link}
                             to="/checkout"

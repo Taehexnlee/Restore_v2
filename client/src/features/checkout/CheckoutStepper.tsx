@@ -5,7 +5,7 @@ import Review from "./Review";
 import { useFetchAddressQuery, useUpdateUserAddressMutation } from "../account/accountApi";
 import type { ConfirmationToken, StripeAddressElementChangeEvent, StripePaymentElementChangeEvent } from "@stripe/stripe-js";
 import { useBakset } from "../../lib/hooks/useBasket";
-import { currencyFormat } from "../../lib/util";
+import { currencyFormat, safeRegexTest } from "../../lib/util";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import {LoadingButton} from '@mui/lab'
@@ -57,13 +57,14 @@ export default function CheckoutStepper() {
     const confirmPayment = async () => {
         setSubmitting(true);
         try {
-            if (!confirmationToken || !basket?.clientSecret) throw new Error('Unable to process payment');
+            const clientSecret = basket?.clientSecret ?? '';
+            if (!confirmationToken || !safeRegexTest(/^pi_/, clientSecret)) throw new Error('Unable to process payment');
 
             const orderModel = await createOrderModel();
             const orderResult = await createOrder(orderModel);
 
             const paymentResult = await stripe?.confirmPayment({
-                clientSecret: basket.clientSecret,
+                clientSecret: clientSecret,
                 redirect: 'if_required',
                 confirmParams: {
                     confirmation_token: confirmationToken.id

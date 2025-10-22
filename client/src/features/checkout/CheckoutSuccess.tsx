@@ -1,13 +1,32 @@
 import { Box, Button, Container, Divider, Paper, Typography } from "@mui/material";
+import { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { Order } from "../../app/model/order";
-import { currencyFormat, formatAddressString, formatPaymentString } from "../../lib/util";
+import { currencyFormat, formatAddressString, formatPaymentString, getStripeClientSecretFromSearch } from "../../lib/util";
 
 export default function CheckoutSuccess() {
   const location = useLocation();
   const order = (location.state as { data?: Order } | null)?.data ?? null;
+  const fallbackClientSecret = useMemo(
+    () => getStripeClientSecretFromSearch(location.search),
+    [location.search]
+  );
 
-  if(!order) return <Typography>Problem accessing the order</Typography>
+  if(!order) {
+    return (
+      <Container maxWidth='md' sx={{ py: 6 }}>
+        <Typography variant="h5" gutterBottom>Problem accessing the order</Typography>
+        {fallbackClientSecret ? (
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            We detected a recent Stripe redirect. Try opening your orders list to confirm the payment status.
+          </Typography>
+        ) : null}
+        <Button variant="contained" component={Link} to="/orders">
+          View my orders
+        </Button>
+      </Container>
+    )
+  }
 
 
   

@@ -20,3 +20,16 @@ export const formatAddressString = (address: ShippingAddress) => {
     return `${card?.brand?.toUpperCase()}, **** **** **** ${card?.last4}, 
             Exp: ${card?.exp_month}/${card?.exp_year}`
   }
+
+export const safeRegexTest = (pattern: RegExp, value: string | null | undefined): boolean => {
+    if (typeof value !== 'string') return false;
+    return pattern.test(value);
+}
+
+export const getStripeClientSecretFromSearch = (search: string | null | undefined): string | null => {
+    if (typeof search !== 'string' || search.trim() === '') return null;
+    const normalized = search.startsWith('?') ? search : `?${search}`;
+    const params = new URLSearchParams(normalized);
+    const clientSecret = params.get('payment_intent_client_secret');
+    return safeRegexTest(/^pi_/, clientSecret) ? clientSecret : null;
+}
