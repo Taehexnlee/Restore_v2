@@ -3,11 +3,22 @@ import { startLoading, stopLoading } from "../layout/uiSlice";
 import { toast } from "react-toastify";
 import { router } from "../routes/Routes";
 
-const customBaseQuery = fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_URL,
-    credentials: 'include'
+const deriveApiBaseUrl = () => {
+    const rawBaseUrl = import.meta.env.VITE_API_URL?.trim();
+    if (!rawBaseUrl) return "/api/";
 
-})
+    const sanitizedBaseUrl = rawBaseUrl.replace(/\/+$/, "");
+    const needsApiSegment = !/\/api(\/|$)/.test(sanitizedBaseUrl);
+
+    return `${sanitizedBaseUrl}${needsApiSegment ? "/api/" : "/"}`;
+};
+
+const API_BASE_URL = deriveApiBaseUrl();
+
+const customBaseQuery = fetchBaseQuery({
+    baseUrl: API_BASE_URL,
+    credentials: "include",
+});
 
 type ErrorResponse = string | { title?: string } | { error?: string[] } | null | undefined;
 const hasTitle = (data: unknown): data is { title: string } => typeof data === 'object' && data !== null && 'title' in data && typeof (data as { title: unknown }).title === 'string';
