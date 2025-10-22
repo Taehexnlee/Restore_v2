@@ -1,54 +1,72 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - rerestore
+name: Build and deploy ASP.NET Core + Vite to Azure Web App - rerestore
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      # 프론트 빌드 (Vite 공개키를 빌드 타임에 주입!)
+      - name: Install deps & build client
+        working-directory: client
+        env:
+          VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.VITE_STRIPE_PUBLISHABLE_KEY }}
+        run: |
+          npm ci --legacy-peer-deps
+          npm run build
 
-      - name: Upload artifact for deployment job
+      # 새 빌드물을 API/wwwroot로 반영 (기존 정적파일 제거 후 복사)
+      - name: Sync client build into API/wwwroot
+        shell: pwsh
+        run: |
+          if (Test-Path "API/wwwroot") { Remove-Item -Recurse -Force "API/wwwroot/*" }
+          New-Item -ItemType Directory -Force -Path "API/wwwroot" | Out-Null
+          Copy-Item -Recurse -Force "client/dist/*" "API/wwwroot/"
+
+      # 솔루션 수준이 아닌 API 프로젝트 단위로 Publish (경고 제거)
+      - name: Publish API
+        run: dotnet publish "API/API.csproj" -c Release -o "${{ github.workspace }}\publish"
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: webapp
+          path: ${{ github.workspace }}\publish
 
   deploy:
     runs-on: windows-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
-      - name: Login to Azure
+          name: webapp
+          path: ./publish
+
+      - name: Azure login (OIDC)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3299A948605E4FA194957D05F93AEAD7 }}
@@ -56,10 +74,8 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5CA9B0B342374DD890EC48D097A7E6D2 }}
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'rerestore'
-          slot-name: 'Production'
-          package: .
-          
+          app-name: rerestore
+          slot-name: Production
+          package: ./publish
