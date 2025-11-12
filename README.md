@@ -1,6 +1,6 @@
-# Restore v2
+# ecommerce-net8
 
-Restore v2 is a modern e-commerce sample that pairs an **ASP.NET Core 8** API with a **React 19 + Vite** front-end. It demonstrates a complete workflow that covers catalog browsing, baskets, checkout with **Stripe**, and order management backed by SQL Server and ASP.NET Identity.
+ecommerce-net8 is a modern e-commerce sample that pairs an **ASP.NET Core 8** API with a **React 19 + Vite** front-end. It demonstrates a complete workflow that covers catalog browsing, baskets, checkout with **Stripe**, and order management backed by SQL Server and ASP.NET Identity.
 
 ---
 
